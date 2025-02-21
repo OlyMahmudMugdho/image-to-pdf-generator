@@ -6,7 +6,7 @@ import Button from './Button.jsx';
 function CropModal({ image, setImages, onClose }) {
   const [croppedImageUrl, setCroppedImageUrl] = useState(null);
   const [error, setError] = useState(null);
-  const cropperRef = useRef(null); // No explicit CropperRef
+  const cropperRef = useRef(null);
 
   // Handle cropping
   const handleCrop = () => {
@@ -46,7 +46,7 @@ function CropModal({ image, setImages, onClose }) {
             src={image.url} // Source image URL
             className="w-full h-[400px]" // Fixed height for the cropper
             stencilProps={{
-              aspectRatio: 1, // Maintain a 1:1 aspect ratio (can be adjusted)
+              aspectRatio: undefined, // Allow free cropping
             }}
           />
         </div>

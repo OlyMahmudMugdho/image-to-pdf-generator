@@ -8,33 +8,21 @@ import { saveAs } from 'file-saver';
 
 function App() {
   const [images, setImages] = useState([]);
-  const [crop, setCrop] = useState({ unit: '%', width: 50, aspect: 1 / 1 });
   const [selectedImage, setSelectedImage] = useState(null);
-  const [cropShape, setCropShape] = useState('rect');
   const [theme, setTheme] = useState('light');
 
+  // Handle image upload
   const handleDrop = async (acceptedFiles) => {
-    const newImages = await Promise.all(
-      acceptedFiles.map(async (file) => {
-        const formData = new FormData();
-        formData.append('image', file);
-        const res = await fetch('http://localhost:8080/upload', {
-          method: 'POST',
-          body: formData,
-        });
-        if (!res.ok) throw new Error('Failed to upload image');
-        const url = await res.text();
-        return {
-          id: Math.random().toString(36).substr(2, 9),
-          file, // Keep for cropping
-          url,  // Backend URL
-          cropped: null,
-        };
-      })
-    );
+    const newImages = acceptedFiles.map((file) => ({
+      id: Math.random().toString(36).substr(2, 9),
+      file,
+      url: URL.createObjectURL(file), // Create a temporary URL for the uploaded file
+      cropped: null, // Placeholder for the cropped image URL
+    }));
     setImages((prev) => [...prev, ...newImages]);
   };
 
+  // Handle drag-and-drop reordering
   const handleDragEnd = (result) => {
     if (!result.destination) return;
     const reorderedImages = Array.from(images);
@@ -43,12 +31,13 @@ function App() {
     setImages(reorderedImages);
   };
 
+  // Generate PDF
   const generatePDF = () => {
     const pdf = new jsPDF();
     images.forEach((image, index) => {
       if (index > 0) pdf.addPage();
-      const imgData = image.cropped || image.url;
-      pdf.addImage(imgData, 'JPEG', 10, 10, 190, 0);
+      const imgData = image.cropped || image.url; // Use cropped image if available
+      pdf.addImage(imgData, 'JPEG', 10, 10, 190, 0); // Adjust dimensions as needed
     });
     const pdfBlob = pdf.output('blob');
     saveAs(pdfBlob, 'images.pdf');
@@ -61,16 +50,11 @@ function App() {
           <h1 className="text-3xl font-bold text-primary">Image to PDF Generator</h1>
           <ThemeToggle theme={theme} toggleTheme={() => setTheme(theme === 'light' ? 'dark' : 'light')} />
         </div>
-
         <Dropzone onDrop={handleDrop} />
         <ImageList images={images} onDragEnd={handleDragEnd} onCropClick={setSelectedImage} />
         {selectedImage && (
           <CropModal
             image={selectedImage}
-            crop={crop}
-            setCrop={setCrop}
-            cropShape={cropShape}
-            setCropShape={setCropShape}
             setImages={setImages}
             onClose={() => setSelectedImage(null)}
           />
