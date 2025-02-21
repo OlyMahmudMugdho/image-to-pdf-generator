@@ -25,10 +25,12 @@ function App() {
   // Handle drag-and-drop reordering
   const handleDragEnd = (result) => {
     if (!result.destination) return;
-    const reorderedImages = Array.from(images);
-    const [movedImage] = reorderedImages.splice(result.source.index, 1);
-    reorderedImages.splice(result.destination.index, 0, movedImage);
-    setImages(reorderedImages);
+
+    const items = Array.from(images);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+
+    setImages(items);
   };
 
   // Generate PDF
@@ -51,7 +53,11 @@ function App() {
           <ThemeToggle theme={theme} toggleTheme={() => setTheme(theme === 'light' ? 'dark' : 'light')} />
         </div>
         <Dropzone onDrop={handleDrop} />
-        <ImageList images={images} onDragEnd={handleDragEnd} onCropClick={setSelectedImage} />
+        <ImageList
+          images={images}
+          onDragEnd={handleDragEnd}
+          onCropClick={setSelectedImage}
+        />
         {selectedImage && (
           <CropModal
             image={selectedImage}
