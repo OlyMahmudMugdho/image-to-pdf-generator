@@ -1,6 +1,6 @@
 import React from 'react';
 
-function ImageList({ images, onDragEnd, onCropClick }) {
+function ImageList({ images, onDragEnd, onCropClick, onRemove }) {
   const handleDragStart = (e, index) => {
     e.dataTransfer.setData('text/plain', index);
   };
@@ -41,10 +41,16 @@ function ImageList({ images, onDragEnd, onCropClick }) {
           />
           <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition flex justify-center items-center">
             <button
-              className="btn btn-sm btn-primary"
+              className="btn btn-sm btn-primary mr-2"
               onClick={() => onCropClick(image)}
             >
               Crop
+            </button>
+            <button
+              className="btn btn-sm btn-error"
+              onClick={() => onRemove(image.id)} // Remove the image
+            >
+              Remove
             </button>
           </div>
         </div>

@@ -57,6 +57,7 @@ function App() {
           images={images}
           onDragEnd={handleDragEnd}
           onCropClick={setSelectedImage}
+          onRemove={(id) => setImages((prev) => prev.filter((img) => img.id !== id))}
         />
         {selectedImage && (
           <CropModal
