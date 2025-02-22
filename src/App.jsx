@@ -9,7 +9,7 @@ import { saveAs } from 'file-saver';
 function App() {
   const [images, setImages] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
-  const [theme, setTheme] = useState('light');
+  const [theme, setTheme] = useState('dark');
 
   // Handle image upload
   const handleDrop = async (acceptedFiles) => {
